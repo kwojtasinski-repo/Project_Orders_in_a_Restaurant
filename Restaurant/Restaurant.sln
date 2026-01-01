@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31912.275
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restaurant.UI", "Restaurant.UI\Restaurant.UI.csproj", "{4F009935-CE4C-439D-8608-AAC0C9A8495A}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Restaurant.IntegrationTests", "Restaurant.IntegrationTests\Restaurant.IntegrationTests.csproj", "{18A768F0-56E7-4BBA-ABBD-23D0921DAAAC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restaurant.Migrations", "Restaurant.Migrations\Restaurant.Migrations.csproj", "{2754D48D-052E-496A-86F2-E79E790D2E56}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restaurant.API", "Restaurant.API\Restaurant.API.csproj", "{4177A910-6464-4BEC-A962-91AD6C6C52CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{2754D48D-052E-496A-86F2-E79E790D2E56}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2754D48D-052E-496A-86F2-E79E790D2E56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2754D48D-052E-496A-86F2-E79E790D2E56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4177A910-6464-4BEC-A962-91AD6C6C52CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4177A910-6464-4BEC-A962-91AD6C6C52CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4177A910-6464-4BEC-A962-91AD6C6C52CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4177A910-6464-4BEC-A962-91AD6C6C52CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
