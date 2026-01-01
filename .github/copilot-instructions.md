@@ -22,6 +22,9 @@ Do NOT suggest:
 - MVVM frameworks for WinForms
 - UI technology replacement unless explicitly requested
 
+The existing internal library already follows a layered architecture
+(Domain, ApplicationLogic, Infrastructure) and must be preserved.
+
 ---
 
 ## Architectural Boundaries (Strict Rules)
@@ -37,6 +40,16 @@ The following rules MUST be respected:
 Violations of these rules are considered incorrect solutions.
 
 Architectural decisions are documented in `docs/adr/` and must be respected.
+
+Existing Domain and ApplicationLogic layers are the single source of truth
+for business rules and workflows.
+
+The API layer must reuse these layers via direct references.
+Do NOT reimplement business logic, validations, or workflows
+inside API controllers or API-specific services.
+
+Controllers must be thin and delegate all behavior
+to ApplicationLogic services.
 
 ---
 
@@ -65,5 +78,6 @@ Do NOT introduce business logic into Forms.
 - Dependencies must be injected via constructors
 - Property injection is not allowed
 - Prefer interfaces over concrete implementations
+- Synchronous wrappers around async code are not allowed.
 
 The codebase is being migrated incrementally; solutions must be compatible with this approach.

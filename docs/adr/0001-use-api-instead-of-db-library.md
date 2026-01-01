@@ -29,6 +29,16 @@ via network calls (HTTP), not via direct database access or shared DB libraries.
 
 The API will act as a system boundary and integration point.
 
+Existing Domain and ApplicationLogic layers are the single source of truth
+for business rules and workflows.
+
+The API layer must reuse these layers via direct references.
+Do NOT reimplement business logic, validations, or workflows
+inside API controllers or API-specific services.
+
+Controllers must be thin and delegate all behavior
+to ApplicationLogic services.
+
 ## Consequences
 
 ### Positive
@@ -46,3 +56,6 @@ The API will act as a system boundary and integration point.
 ## Notes
 This decision is foundational and should be respected by all future changes.
 Any new functionality must be implemented behind the API boundary.
+
+Controllers must remain thin and delegate all business behavior
+to ApplicationLogic services.
