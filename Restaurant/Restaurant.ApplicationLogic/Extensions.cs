@@ -1,5 +1,6 @@
-﻿using Castle.MicroKernel.Registration;
+using Castle.MicroKernel.Registration;
 using Castle.Windsor;
+using Microsoft.Extensions.DependencyInjection;
 using Restaurant.ApplicationLogic.Exceptions;
 using Restaurant.ApplicationLogic.Implementation;
 using Restaurant.ApplicationLogic.Interfaces;
@@ -19,6 +20,18 @@ namespace Restaurant.ApplicationLogic
             container.Register(Component.For<IProductSaleService>().ImplementedBy<ProductSaleService>().LifestyleTransient());
             container.Register(Component.For<IMapToApplicationException>().ImplementedBy<MapToApplicationException>().LifestyleSingleton());
             return container;
+        }
+
+        public static IServiceCollection AddApplicationLogic(this IServiceCollection services)
+        {
+            services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<IAdditonService, AdditonService>();
+            services.AddTransient<IMailSender, MailSender>();
+            services.AddScoped<IOptions, Options>();
+            services.AddTransient<IProductSaleService, ProductSaleService>();
+            services.AddSingleton<IMapToApplicationException, MapToApplicationException>();
+            return services;
         }
     }
 }

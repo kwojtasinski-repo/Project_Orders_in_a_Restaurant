@@ -1,23 +1,25 @@
-﻿using Castle.Windsor;
-using Restaurant.Domain.Repositories;
-using Restaurant.Infrastructure.Repositories;
+using Castle.MicroKernel.Lifestyle;
 using Castle.MicroKernel.Registration;
+using Castle.Windsor;
+using FluentMigrator;
+using FluentMigrator.Runner;
+using FluentMigrator.Runner.Announcers;
+using FluentMigrator.Runner.Initialization;
+using FluentMigrator.Runner.Processors;
+using FluentMigrator.Runner.Processors.SQLite;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Restaurant.ApplicationLogic.Interfaces;
+using Restaurant.Domain.Repositories;
+using Restaurant.Infrastructure.DAL;
+using Restaurant.Infrastructure.Mappings;
+using Restaurant.Infrastructure.Repositories;
+using Restaurant.Infrastructure.Requests;
+using Restaurant.Migrations.Orders;
+using System;
 using System.Collections.Specialized;
 using System.Data;
-using Castle.MicroKernel.Lifestyle;
 using System.Data.SQLite;
-using Restaurant.Infrastructure.Requests;
-using Restaurant.Infrastructure.Mappings;
-using Restaurant.ApplicationLogic.Interfaces;
-using Restaurant.Infrastructure.DAL;
-using FluentMigrator.Runner.Announcers;
-using FluentMigrator.Runner.Processors;
-using System;
-using FluentMigrator.Runner.Initialization;
-using FluentMigrator.Runner;
-using Restaurant.Migrations.Orders;
-using FluentMigrator.Runner.Processors.SQLite;
-using FluentMigrator;
 
 namespace Restaurant.Infrastructure
 {
@@ -41,7 +43,23 @@ namespace Restaurant.Infrastructure
 
             return container;
         }
-        
+
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IAdditonRepository, AdditonRepository>();
+            services.AddScoped<IProductSaleRepository, ProductSaleRepository>();
+            services.AddDbConnection(configuration);
+            services.ApplyMappings();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddFluentMigratorCore()
+                .ConfigureRunner(runner => runner.AddSQLite()
+                                                 .WithGlobalCommandTimeout(TimeSpan.FromSeconds(5))
+                                                 .WithMigrationsIn(typeof(InitCreateTableOrders_04_10_2022_18_05).Assembly));
+            return services;
+        }
+
         public static IWindsorContainer AddDbConnection(this IWindsorContainer container, NameValueCollection appSettings)
         {
             var connectionString = appSettings["RestaurantDb"];
@@ -53,6 +71,17 @@ namespace Restaurant.Infrastructure
                             })
                         .LifestyleScoped());
             return container;
+        }
+
+        public static IServiceCollection AddDbConnection(this IServiceCollection services, IConfiguration configuration)
+        {
+            var connectionString = configuration.GetConnectionString("RestaurantDb");
+            services.AddScoped<IDbConnection>((_) => {
+                var connection = new SQLiteConnection(connectionString);
+                connection.Open();
+                return connection;
+            });
+            return services;
         }
 
         private static IWindsorContainer AddFluentMigrator(this IWindsorContainer container, string connectionString)
@@ -97,6 +126,15 @@ namespace Restaurant.Infrastructure
             using (var dispose = container.BeginScope())
             {
                 var migrationRunner = container.Resolve<MigrationRunner>();
+                migrationRunner.MigrateUp();
+            }
+        }
+
+        public static void UseInfrastructure(this IServiceProvider serviceProvider)
+        {
+            using (var scope = serviceProvider.CreateScope())
+            {
+                var migrationRunner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
                 migrationRunner.MigrateUp();
             }
         }
