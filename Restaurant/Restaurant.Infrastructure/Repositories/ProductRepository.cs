@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Restaurant.ApplicationLogic.Interfaces;
 using Restaurant.Domain.Entities;
 using Restaurant.Domain.Repositories;
@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Restaurant.Infrastructure.Repositories
 {
@@ -80,8 +81,19 @@ namespace Restaurant.Infrastructure.Repositories
 
         public ICollection<Product> GetAll()
         {
-            var sql = "SELECT * FROM products";
+            var sql = @"SELECT 
+                        Id, ProductName, Price, ProductKind 
+                        FROM products";
             var result = _dbConnection.Query<ProductPOCO>(sql);
+            return result.Select(p => p.AsEntity()).ToList();
+        }
+
+        public async Task<ICollection<Product>> GetAllAsync()
+        {
+            var sql = @"SELECT 
+                        Id, ProductName, Price, ProductKind 
+                        FROM products";
+            var result = await _dbConnection.QueryAsync<ProductPOCO>(sql);
             return result.Select(p => p.AsEntity()).ToList();
         }
 

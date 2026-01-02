@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -71,7 +71,7 @@ namespace Restaurant.UI
                     orderIds.Add((Guid)selectedRow.Cells["Id"].Value);
                 }
 
-                _requestHandler.Send<IOrderService>(o => o.DeleteWithPositions(orderIds));
+                _requestHandler.Send<IOrderService>(o => o.DeleteOrders(orderIds));
 
                 var results = _requestHandler.Send<IOrderService, IEnumerable<OrderDto>>(o => o.GetAll());
                 LoadOrdersToDataGrid(results.ToList());

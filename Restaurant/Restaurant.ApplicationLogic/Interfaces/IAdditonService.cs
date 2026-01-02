@@ -1,6 +1,7 @@
-﻿using Restaurant.ApplicationLogic.DTO;
+using Restaurant.ApplicationLogic.DTO;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Restaurant.ApplicationLogic.Interfaces
 {
@@ -8,5 +9,6 @@ namespace Restaurant.ApplicationLogic.Interfaces
     {
         AdditionDto Get(Guid id);
         IEnumerable<AdditionDto> GetAll();
+        Task<IEnumerable<AdditionDto>> GetAllAsync();
     }
 }

@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Restaurant.ApplicationLogic.Interfaces;
 using Restaurant.Domain.Entities;
 using Restaurant.Domain.Repositories;
@@ -28,11 +28,13 @@ namespace Restaurant.Infrastructure.Repositories
 
         public void Delete(Guid id)
         {
+            var sqlProductSales = "DELETE FROM product_sales WHERE OrderId = @OrderId";
+            _dbConnection.Execute(sqlProductSales, new { OrderId = id });
             var sql = "DELETE FROM orders WHERE Id = @Id";
             _dbConnection.Execute(sql, new { Id = id });
         }
 
-        public void DeleteWithPositions(IEnumerable<Guid> ids)
+        public void DeleteOrders(IEnumerable<Guid> ids)
         {
             var sqlProductSales = "DELETE FROM product_sales WHERE OrderId IN @Ids";
             _dbConnection.Execute(sqlProductSales, new { Ids = ids });

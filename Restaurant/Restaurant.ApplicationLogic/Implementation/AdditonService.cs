@@ -1,10 +1,11 @@
-﻿using Restaurant.ApplicationLogic.DTO;
+using Restaurant.ApplicationLogic.DTO;
 using Restaurant.ApplicationLogic.Interfaces;
 using Restaurant.ApplicationLogic.Mappings;
 using Restaurant.Domain.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Restaurant.ApplicationLogic.Implementation
 {
@@ -26,6 +27,12 @@ namespace Restaurant.ApplicationLogic.Implementation
         public IEnumerable<AdditionDto> GetAll()
         {
             var additions = _additonRepository.GetAll();
+            return additions.Select(a => a.AsDto());
+        }
+
+        public async Task<IEnumerable<AdditionDto>> GetAllAsync()
+        {
+            var additions = await _additonRepository.GetAllAsync();
             return additions.Select(a => a.AsDto());
         }
     }

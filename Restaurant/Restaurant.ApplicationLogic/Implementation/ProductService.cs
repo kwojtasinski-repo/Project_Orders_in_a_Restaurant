@@ -1,10 +1,11 @@
-﻿using Restaurant.ApplicationLogic.Interfaces;
+using Restaurant.ApplicationLogic.Interfaces;
 using Restaurant.ApplicationLogic.DTO;
 using System;
 using System.Collections.Generic;
 using Restaurant.Domain.Repositories;
 using System.Linq;
 using Restaurant.ApplicationLogic.Mappings;
+using System.Threading.Tasks;
 
 namespace Restaurant.ApplicationLogic.Implementation
 {
@@ -38,6 +39,18 @@ namespace Restaurant.ApplicationLogic.Implementation
         public IEnumerable<ProductDto> GetAll()
         {
             var products = _productRepository.GetAll();
+            return products.Select(p => p.AsDto());
+        }
+
+        public async Task<IEnumerable<ProductDto>> GetAllAsync()
+        {
+            var products = await _productRepository.GetAllAsync();
+            return products.Select(p => p.AsDto());
+        }
+
+        public async Task<IEnumerable<ProductDto>> GetAllAsync()
+        {
+            var products = await _productRepository.GetAllAsync();
             return products.Select(p => p.AsDto());
         }
 

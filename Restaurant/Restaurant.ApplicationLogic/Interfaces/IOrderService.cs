@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Restaurant.ApplicationLogic.DTO;
 using System;
 
@@ -12,6 +12,6 @@ namespace Restaurant.ApplicationLogic.Interfaces
         Guid Add(OrderDetailsDto orderDetailsDto);
         void Update(OrderDto order);
         void Delete(Guid id);
-        void DeleteWithPositions(IEnumerable<Guid> ids);
+        void DeleteOrders(IEnumerable<Guid> ids);
     }
 }

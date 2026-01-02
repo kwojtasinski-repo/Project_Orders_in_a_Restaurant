@@ -1,6 +1,7 @@
-﻿using Restaurant.ApplicationLogic.DTO;
+using Restaurant.ApplicationLogic.DTO;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Restaurant.ApplicationLogic.Interfaces
 {
@@ -11,5 +12,6 @@ namespace Restaurant.ApplicationLogic.Interfaces
         Guid Add(ProductDto product);
         void Update(ProductDto product);
         void Delete(Guid id);
+        Task<IEnumerable<ProductDto>> GetAllAsync();
     }
 }

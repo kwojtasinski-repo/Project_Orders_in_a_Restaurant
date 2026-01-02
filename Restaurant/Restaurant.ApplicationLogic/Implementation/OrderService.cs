@@ -1,4 +1,4 @@
-﻿using Restaurant.ApplicationLogic.DTO;
+using Restaurant.ApplicationLogic.DTO;
 using Restaurant.ApplicationLogic.Interfaces;
 using Restaurant.ApplicationLogic.Mappings;
 using Restaurant.Domain.Repositories;
@@ -73,9 +73,9 @@ namespace Restaurant.ApplicationLogic.Implementation
             _orderRepository.Delete(id);
         }
 
-        public void DeleteWithPositions(IEnumerable<Guid> ids)
+        public void DeleteOrders(IEnumerable<Guid> ids)
         {
-            _orderRepository.DeleteWithPositions(ids);
+            _orderRepository.DeleteOrders(ids);
         }
 
         public OrderDetailsDto Get(Guid id)
