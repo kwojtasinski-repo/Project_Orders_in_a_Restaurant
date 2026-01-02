@@ -56,7 +56,7 @@ namespace Restaurant.Infrastructure
             services.AddFluentMigratorCore()
                 .ConfigureRunner(runner => runner.AddSQLite()
                                                  .WithGlobalCommandTimeout(TimeSpan.FromSeconds(5))
-                                                 .WithMigrationsIn(typeof(InitCreateTableOrders_04_10_2022_18_05).Assembly));
+                                                 .ScanIn(typeof(InitCreateTableOrders_04_10_2022_18_05).Assembly).For.Migrations());
             return services;
         }
 
