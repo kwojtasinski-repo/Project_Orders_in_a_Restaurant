@@ -46,7 +46,7 @@ namespace Restaurant.Infrastructure.Repositories
 
         public async Task<ICollection<Addition>> GetAllAsync()
         {
-            var sql = "SELECT Id, Name, Price, ProductKind FROM additions";
+            var sql = "SELECT Id, AdditionName, Price, ProductKind FROM additions";
             var result = await _dbConnection.QueryAsync<AdditionPOCO>(sql);
             return result.Select(o => o.AsEntity()).ToList();
         }

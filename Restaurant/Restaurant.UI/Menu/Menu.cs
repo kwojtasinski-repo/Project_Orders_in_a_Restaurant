@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using Restaurant.Infrastructure.Requests;
-using Restaurant.ApplicationLogic.Interfaces;
+using Newtonsoft.Json;
 using Restaurant.ApplicationLogic.DTO;
-using System.Linq;
-using Restaurant.UI.Dialog;
-using System.Threading.Tasks;
-using Restaurant.UI.Async;
+using Restaurant.ApplicationLogic.Interfaces;
 using Restaurant.ApplicationLogic.Mail;
+using Restaurant.Infrastructure.Requests;
+using Restaurant.UI.Async;
+using Restaurant.UI.Dialog;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Restaurant.UI
 {
@@ -17,6 +19,7 @@ namespace Restaurant.UI
         private readonly List<ProductSaleDto> productSalesList = new List<ProductSaleDto>();
         decimal amountToPay = decimal.Zero;
         private readonly IRequestHandler _requestHandler;
+        private readonly HttpClient _httpClient;
         private IEnumerable<ProductDto> _products = new List<ProductDto>();
         private IEnumerable<AdditionDto> _additions = new List<AdditionDto>();
         private ProductDto currentProduct;
@@ -24,9 +27,10 @@ namespace Restaurant.UI
         private string email;
         private string notes;
 
-        public Menu(IRequestHandler requestHandler)
+        public Menu(IRequestHandler requestHandler, HttpClient httpClient)
         {
             _requestHandler = requestHandler;
+            _httpClient = httpClient;
             InitializeComponent();
         }
 
@@ -265,12 +269,22 @@ namespace Restaurant.UI
                         MessageBoxIcon.Information);
         }
 
-        private void OnLoad(object sender, EventArgs e)
+        private async void OnLoad(object sender, EventArgs e)
         {
             labelCostOfOrder.Text = amountToPay > 0 ? "Koszt: " + amountToPay + "zł" : "";
-            _products = _requestHandler.Send<IProductService, IEnumerable<ProductDto>>(s => s.GetAll());
-            _additions = _requestHandler.Send<IAdditonService, IEnumerable<AdditionDto>>(s => s.GetAll());
-            comboBoxMainDishes1.Items.AddRange(_products.Select(p => p.ProductName).ToArray());
+            try
+            {
+                var response = await _httpClient.GetAsync("/api/menu");
+                var result = await response.Content.ReadAsStringAsync();
+                var menu = JsonConvert.DeserializeObject<MenuDto>(result);
+                _products = menu?.Products ?? new List<ProductDto>();
+                _additions = menu?.Additions ?? new List<AdditionDto>();
+                comboBoxMainDishes1.Items.AddRange(_products.Select(p => p.ProductName).ToArray());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Błąd pobierania menu: {ex.Message}", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void ChangedAddition(object sender, EventArgs e)
@@ -284,5 +298,12 @@ namespace Restaurant.UI
 
             currentAddition = _additions.Where(a => a.AdditionName == currentAdditionName).SingleOrDefault();
         }
+
+        private class MenuDto
+        {
+            public IEnumerable<ProductDto> Products { get; set; }
+            public IEnumerable<AdditionDto> Additions { get; set; }
+        }
     }
+
 }
