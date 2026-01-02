@@ -1,3 +1,4 @@
+using Restaurant.API.Middleware;
 using Restaurant.ApplicationLogic;
 using Restaurant.Infrastructure;
 
@@ -10,13 +11,21 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddApplicationLogic();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<BadRequestExceptionHandler>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
+    app.UseExceptionHandler("/Error");
     app.MapOpenApi();
+}
+else
+{
+    app.UseExceptionHandler();
 }
 
 app.Services.UseInfrastructure();
