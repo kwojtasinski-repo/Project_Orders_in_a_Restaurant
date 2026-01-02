@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Restaurant.ApplicationLogic.Implementation
 {
@@ -26,7 +27,7 @@ namespace Restaurant.ApplicationLogic.Implementation
         {
             order.Id = Guid.NewGuid();
             var currentDate = DateTime.UtcNow;
-            var latestOrder = _orderRepository.GetLatestOrderOnDateAsync(currentDate).AsDto();
+            var latestOrder = _orderRepository.GetLatestOrderOnDate(currentDate).AsDto();
             var orderNumber = CreateOrderNumber(latestOrder, currentDate);
             order.OrderNumber = orderNumber;
             order.Created = currentDate;
@@ -39,7 +40,7 @@ namespace Restaurant.ApplicationLogic.Implementation
         {
             orderDetailsDto.Id = Guid.NewGuid();
             var currentDate = DateTime.UtcNow;
-            var latestOrder = _orderRepository.GetLatestOrderOnDateAsync(currentDate)?.AsDto();
+            var latestOrder = _orderRepository.GetLatestOrderOnDate(currentDate)?.AsDto();
             var orderNumber = CreateOrderNumber(latestOrder, currentDate);
             orderDetailsDto.OrderNumber = orderNumber;
             orderDetailsDto.Created = currentDate;
@@ -68,14 +69,57 @@ namespace Restaurant.ApplicationLogic.Implementation
             }
         }
 
+        public async Task<Guid> AddAsync(OrderDetailsDto orderDetailsDto)
+        {
+            orderDetailsDto.Id = Guid.NewGuid();
+            var currentDate = DateTime.UtcNow;
+            var latestOrder = (await _orderRepository.GetLatestOrderOnDateAsync(currentDate))?.AsDto();
+            var orderNumber = CreateOrderNumber(latestOrder, currentDate);
+            orderDetailsDto.OrderNumber = orderNumber;
+            orderDetailsDto.Created = currentDate;
+
+            _unitOfWork.Begin();
+
+            try
+            {
+                var id = await _orderRepository.AddAsync(orderDetailsDto.AsEntity());
+
+                foreach (var productSale in orderDetailsDto.Products)
+                {
+                    productSale.OrderId = id;
+                    productSale.Id = Guid.NewGuid();
+                    productSale.ProductSaleState = ProductSaleState.Ordered;
+                    _productSaleRepository.Add(productSale.AsEntity());
+                }
+
+                _unitOfWork.Commit();
+                return id;
+            }
+            catch
+            {
+                _unitOfWork.Rollback();
+                throw;
+            }
+        }
+
         public void Delete(Guid id)
         {
             _orderRepository.Delete(id);
         }
 
+        public async Task DeleteAsync(Guid id)
+        {
+            await _orderRepository.DeleteAsync(id);
+        }
+
         public void DeleteOrders(IEnumerable<Guid> ids)
         {
             _orderRepository.DeleteOrders(ids);
+        }
+
+        public async Task DeleteOrdersAsync(IEnumerable<Guid> ids)
+        {
+            await _orderRepository.DeleteOrdersAsync(ids);
         }
 
         public OrderDetailsDto Get(Guid id)
@@ -88,6 +132,18 @@ namespace Restaurant.ApplicationLogic.Implementation
         {
             var orders = _orderRepository.GetAll();
             return orders.Select(o => o.AsDto());
+        }
+
+        public async Task<IEnumerable<OrderDto>> GetAllAsync()
+        {
+            var orders = await _orderRepository.GetAllAsync();
+            return orders.Select(o => o.AsDto());
+        }
+
+        public async Task<OrderDetailsDto> GetAsync(Guid id)
+        {
+            var order = await _orderRepository.GetAsync(id);
+            return order.AsDetailsDto();
         }
 
         public void Update(OrderDto order)

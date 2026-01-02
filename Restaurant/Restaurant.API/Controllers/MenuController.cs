@@ -20,12 +20,13 @@ namespace Restaurant.API.Controllers
         [HttpGet]
         public async Task<ActionResult<MenuDto>> GetMenu()
         {
-            var products = await _productService.GetAllAsync();
-            var additions = await _additonService.GetAllAsync();
+            var productsTask = _productService.GetAllAsync();
+            var additionsTask = _additonService.GetAllAsync();
+            await Task.WhenAll(productsTask, additionsTask);
             var menu = new MenuDto
             {
-                Products = products,
-                Additions = additions
+                Products = productsTask.Result,
+                Additions = additionsTask.Result
             };
             return Ok(menu);
         }

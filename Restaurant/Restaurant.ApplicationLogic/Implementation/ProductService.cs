@@ -48,12 +48,6 @@ namespace Restaurant.ApplicationLogic.Implementation
             return products.Select(p => p.AsDto());
         }
 
-        public async Task<IEnumerable<ProductDto>> GetAllAsync()
-        {
-            var products = await _productRepository.GetAllAsync();
-            return products.Select(p => p.AsDto());
-        }
-
         public void Update(ProductDto product)
         {
             _productRepository.Update(product.AsEntity());
