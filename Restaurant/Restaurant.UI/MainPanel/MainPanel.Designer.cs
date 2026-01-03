@@ -1,5 +1,3 @@
-using Restaurant.Infrastructure.Requests;
-
 namespace Restaurant.UI
 {
     partial class MainPanel

@@ -1,34 +1,41 @@
-﻿using Castle.Windsor;
-using Restaurant.UI;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Restaurant.ApplicationLogic;
+using Restaurant.Infrastructure;
 using System;
-using System.Configuration;
-using System.Linq;
+using System.Collections.Generic;
 
 namespace Restaurant.IntegrationTests.Common
 {
     internal class TestApplicationFactory
     {
-        public static string DB_FILE_NAME => GetDatabaseFileName();
+        public static string DB_FILE_NAME => "restaurant-integration-test.db";
 
-        public IWindsorContainer StartApplication()
+        public IServiceProvider StartApplication()
         {
-            var container = SetupApplication.Create();
-            DataSeed.AddData(container);
-            return container;
-        }
-
-        private static string GetDatabaseFileName()
-        {
-            var connectionSplited = ConfigurationManager.ConnectionStrings["RestaurantDb"].ToString()
-               .Split(';').AsEnumerable();
-            var dataSource = connectionSplited.Where(s => s.Contains("Data Source=")).FirstOrDefault();
-
-            if (dataSource is null)
+            var services = new ServiceCollection();
+            var inMemorySettings = new Dictionary<string, string>
             {
-                throw new InvalidOperationException("Invalid string, there is no 'Data Source='");
-            }
-            
-            return dataSource.Split('=')[1];
+                ["ConnectionStrings:RestaurantDb"] = $"Data Source={DB_FILE_NAME};New=True;BinaryGuid=False",
+                ["EmailOptions:Login"] = "login",
+                ["EmailOptions:Password"] = "",
+                ["EmailOptions:SmtpClient"] = "",
+                ["EmailOptions:SmtpPort"] = "578",
+                ["EmailOptions:Email"] = "email@email.com"
+            };
+
+
+            var configurationBuilder = new ConfigurationBuilder();
+            configurationBuilder.AddInMemoryCollection(inMemorySettings);
+            var configuration = configurationBuilder.Build();
+
+            services.AddApplicationLogic(configuration);
+            services.AddInfrastructure(configuration);
+
+            var serviceProvider = services.BuildServiceProvider();
+            serviceProvider.UseInfrastructure();
+            DataSeed.AddData(serviceProvider);
+            return serviceProvider;
         }
     }
 }

@@ -1,6 +1,5 @@
-﻿using Castle.MicroKernel.Lifestyle;
-using Castle.Windsor;
 using Dapper;
+using Microsoft.Extensions.DependencyInjection;
 using Restaurant.Domain.Entities;
 using System;
 using System.Data;
@@ -9,11 +8,11 @@ namespace Restaurant.IntegrationTests.Common
 {
     internal class DataSeed
     {
-        public static void AddData(IWindsorContainer windsorContainer)
+        public static void AddData(IServiceProvider serviceProvider)
         {
-            using (var scope = windsorContainer.BeginScope())
+            using (var scope = serviceProvider.CreateScope())
             {
-                var dbConnection = windsorContainer.Resolve<IDbConnection>();
+                var dbConnection = scope.ServiceProvider.GetRequiredService<IDbConnection>();
 
                 dbConnection.Execute("INSERT INTO products (Id, ProductName, Price, ProductKind) VALUES(@Id, @ProductName, @Price, @ProductKind)",
                     new

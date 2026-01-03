@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+using Microsoft.Extensions.DependencyInjection;
+using NUnit.Framework;
 using Restaurant.Domain.Entities;
 using Restaurant.Domain.Repositories;
 using Shouldly;
@@ -14,7 +15,7 @@ namespace Restaurant.IntegrationTests
         [SetUp]
         public void Setup()
         {
-            repository = Config.Container.Resolve<IProductRepository>();
+            repository = Config.Container.GetRequiredService<IProductRepository>();
         }
 
         [Test]
