@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Restaurant.UI.DTO;
+using Restaurant.Shared.DTO;
 
 namespace Restaurant.UI.Services
 {

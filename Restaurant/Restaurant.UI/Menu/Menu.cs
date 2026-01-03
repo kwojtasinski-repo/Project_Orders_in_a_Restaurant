@@ -1,4 +1,4 @@
-using Restaurant.ApplicationLogic.DTO;
+using Restaurant.Shared.DTO;
 using Restaurant.UI.Dialog;
 using Restaurant.UI.Services;
 using System;

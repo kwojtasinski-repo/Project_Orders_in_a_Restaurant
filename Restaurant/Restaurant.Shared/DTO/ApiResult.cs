@@ -1,4 +1,4 @@
-namespace Restaurant.UI.DTO
+namespace Restaurant.Shared.DTO
 {
     public class ApiResult<T>
     {

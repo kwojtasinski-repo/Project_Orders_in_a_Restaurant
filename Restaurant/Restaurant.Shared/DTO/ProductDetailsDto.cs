@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
-namespace Restaurant.ApplicationLogic.DTO
+namespace Restaurant.Shared.DTO
 {
     public class ProductDetailsDto : ProductDto
     {

@@ -1,4 +1,4 @@
-using Restaurant.UI.DTO;
+using Restaurant.Shared.DTO;
 using Restaurant.UI.Services;
 using System;
 using System.Windows.Forms;

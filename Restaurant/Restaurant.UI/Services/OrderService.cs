@@ -5,8 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Restaurant.ApplicationLogic.DTO;
-using Restaurant.UI.DTO;
+using Restaurant.Shared.DTO;
 
 namespace Restaurant.UI.Services
 {

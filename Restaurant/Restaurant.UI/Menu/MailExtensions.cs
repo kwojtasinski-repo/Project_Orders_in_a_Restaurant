@@ -1,6 +1,5 @@
-﻿using Restaurant.ApplicationLogic.DTO;
+using Restaurant.Shared.DTO;
 using Restaurant.UI.Exceptions;
-using System;
 using System.Text;
 
 namespace Restaurant.UI

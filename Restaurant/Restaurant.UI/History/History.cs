@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Restaurant.ApplicationLogic.DTO;
+using Restaurant.Shared.DTO;
 using Restaurant.UI.Services;
 
 namespace Restaurant.UI

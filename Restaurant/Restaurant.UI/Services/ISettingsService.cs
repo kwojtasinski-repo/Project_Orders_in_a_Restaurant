@@ -1,4 +1,4 @@
-using Restaurant.UI.DTO;
+using Restaurant.Shared.DTO;
 using System.Threading.Tasks;
 
 namespace Restaurant.UI.Services

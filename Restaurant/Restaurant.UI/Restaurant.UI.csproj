@@ -246,11 +246,6 @@
     <Compile Include="Dialog\DialogWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DTO\ApiError.cs" />
-    <Compile Include="DTO\ApiErrorResponse.cs" />
-    <Compile Include="DTO\ApiResult.cs" />
-    <Compile Include="DTO\MenuDto.cs" />
-    <Compile Include="DTO\SettingsDto.cs" />
     <Compile Include="Exceptions\RestaurantClientException.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="MainPanel\MainPanel.cs">
@@ -342,13 +337,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Restaurant.ApplicationLogic\Restaurant.ApplicationLogic.csproj">
-      <Project>{80fd8716-e3dc-40f0-8604-30ba2f32b5c2}</Project>
-      <Name>Restaurant.ApplicationLogic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Restaurant.Infrastructure\Restaurant.Infrastructure.csproj">
-      <Project>{4e6dbbe2-0e71-4611-97d4-1640291aec7f}</Project>
-      <Name>Restaurant.Infrastructure</Name>
+    <ProjectReference Include="..\Restaurant.Shared\Restaurant.Shared.csproj">
+      <Project>{72d0718e-e0e4-44bf-b6cc-ae57b1fbef8b}</Project>
+      <Name>Restaurant.Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

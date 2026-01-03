@@ -1,7 +1,6 @@
-using Restaurant.ApplicationLogic.DTO;
+using Restaurant.Shared.DTO;
 using Restaurant.Domain.Entities;
 using Restaurant.Domain.Exceptions;
-using System;
 using System.Linq;
 using System.Text;
 
@@ -22,7 +21,7 @@ namespace Restaurant.ApplicationLogic.Mappings
                 Id = product.Id,
                 Price = product.Price,
                 ProductName = product.ProductName,
-                ProductKind = (DTO.ProductKind) product.ProductKind
+                ProductKind = (Shared.DTO.ProductKind) product.ProductKind
             };
 
             return productDto;
@@ -35,7 +34,7 @@ namespace Restaurant.ApplicationLogic.Mappings
                 Id = product.Id,
                 Price = product.Price,
                 ProductName = product.ProductName,
-                ProductKind = (DTO.ProductKind) product.ProductKind,
+                ProductKind = (Shared.DTO.ProductKind) product.ProductKind,
                 Orders = product.Orders.Select(o => o.AsDto())
             };
 
@@ -91,7 +90,7 @@ namespace Restaurant.ApplicationLogic.Mappings
                 OrderId = productSale.OrderId,
                 Product = productSale.Product.AsDto(),
                 ProductId = productSale.ProductId,
-                ProductSaleState = (DTO.ProductSaleState) productSale.ProductSaleState
+                ProductSaleState = (Shared.DTO.ProductSaleState) productSale.ProductSaleState
             };
 
             return productSaleDto;
@@ -118,7 +117,7 @@ namespace Restaurant.ApplicationLogic.Mappings
                 OrderId = productSale.OrderId,
                 Product = productSale.Product.AsDto(),
                 ProductId = productSale.ProductId,
-                ProductSaleState = (DTO.ProductSaleState) productSale.ProductSaleState,
+                ProductSaleState = (Shared.DTO.ProductSaleState) productSale.ProductSaleState,
                 Order = productSale.Order.AsDto()
             };
 
@@ -132,7 +131,7 @@ namespace Restaurant.ApplicationLogic.Mappings
                 Id = addition.Id,
                 AdditionName = addition.AdditionName,
                 Price = addition.Price,
-                ProductKind = (DTO.ProductKind) addition.ProductKind
+                ProductKind = (Shared.DTO.ProductKind) addition.ProductKind
             };
 
             return additionDto;

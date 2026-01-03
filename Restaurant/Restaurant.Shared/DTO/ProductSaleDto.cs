@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Text;
 
-namespace Restaurant.ApplicationLogic.DTO
+namespace Restaurant.Shared.DTO
 {
     public class ProductSaleDto : BaseDto
     {

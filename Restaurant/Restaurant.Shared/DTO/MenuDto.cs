@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using Restaurant.ApplicationLogic.DTO;
 
-namespace Restaurant.API.DTO
+namespace Restaurant.Shared.DTO
 {
     public class MenuDto
     {

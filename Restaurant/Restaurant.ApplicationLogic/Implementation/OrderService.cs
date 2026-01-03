@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging;
-using Restaurant.ApplicationLogic.DTO;
+using Restaurant.Shared.DTO;
 using Restaurant.ApplicationLogic.Interfaces;
 using Restaurant.ApplicationLogic.Mail;
 using Restaurant.ApplicationLogic.Mappings;

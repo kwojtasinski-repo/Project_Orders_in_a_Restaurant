@@ -1,4 +1,4 @@
-﻿namespace Restaurant.ApplicationLogic.DTO
+namespace Restaurant.Shared.DTO
 {
     public class ProductSaleDetailsDto : ProductSaleDto
     {

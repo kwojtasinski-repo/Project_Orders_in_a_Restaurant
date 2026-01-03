@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.ApplicationLogic.Interfaces;
-using Restaurant.ApplicationLogic.DTO;
+using Restaurant.Shared.DTO;
 
 namespace Restaurant.API.Controllers
 {

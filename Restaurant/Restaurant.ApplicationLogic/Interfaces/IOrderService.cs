@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Restaurant.ApplicationLogic.DTO;
+using Restaurant.Shared.DTO;
 using System;
 using System.Threading.Tasks;
 

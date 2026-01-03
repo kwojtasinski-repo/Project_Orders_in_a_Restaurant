@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace Restaurant.ApplicationLogic.DTO
+namespace Restaurant.Shared.DTO
 {
     public class BaseDto
     {

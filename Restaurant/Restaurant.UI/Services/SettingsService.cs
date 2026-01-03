@@ -1,5 +1,5 @@
 using Newtonsoft.Json;
-using Restaurant.UI.DTO;
+using Restaurant.Shared.DTO;
 using System;
 using System.Net;
 using System.Net.Http;

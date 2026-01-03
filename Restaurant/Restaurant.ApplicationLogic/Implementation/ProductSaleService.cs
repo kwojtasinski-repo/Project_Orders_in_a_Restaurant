@@ -1,4 +1,4 @@
-﻿using Restaurant.ApplicationLogic.DTO;
+using Restaurant.Shared.DTO;
 using Restaurant.ApplicationLogic.Interfaces;
 using Restaurant.ApplicationLogic.Mappings;
 using Restaurant.Domain.Repositories;

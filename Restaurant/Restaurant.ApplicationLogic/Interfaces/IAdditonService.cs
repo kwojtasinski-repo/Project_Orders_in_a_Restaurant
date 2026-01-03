@@ -1,4 +1,4 @@
-using Restaurant.ApplicationLogic.DTO;
+using Restaurant.Shared.DTO;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
