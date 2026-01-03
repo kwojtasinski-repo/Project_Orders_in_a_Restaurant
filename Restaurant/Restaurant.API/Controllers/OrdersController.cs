@@ -28,10 +28,10 @@ namespace Restaurant.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Guid>> Add([FromBody] OrderDetailsDto orderDetailsDto)
+        public async Task<ActionResult<OrderDetailsDto>> Add([FromBody] OrderDetailsDto orderDetailsDto)
         {
-            var id = await orderService.AddAsync(orderDetailsDto);
-            return CreatedAtAction(nameof(Get), new { id }, id);
+            var dto = await orderService.AddAsync(orderDetailsDto);
+            return CreatedAtAction(nameof(Get), new { dto.Id }, dto);
         }
 
         [HttpDelete("{id}")]
@@ -44,7 +44,7 @@ namespace Restaurant.API.Controllers
         [HttpDelete("multi")]
         public async Task<IActionResult> DeleteOrders([FromBody] IEnumerable<Guid> ids)
         {
-            await orderService.DeleteOrdersAsync(ids);
+            await orderService.DeleteOrdersAsync(ids ?? []);
             return NoContent();
         }
     }

@@ -1,15 +1,9 @@
-using Newtonsoft.Json;
 using Restaurant.ApplicationLogic.DTO;
-using Restaurant.ApplicationLogic.Interfaces;
-using Restaurant.ApplicationLogic.Mail;
-using Restaurant.Infrastructure.Requests;
-using Restaurant.UI.Async;
 using Restaurant.UI.Dialog;
+using Restaurant.UI.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Restaurant.UI
@@ -18,8 +12,8 @@ namespace Restaurant.UI
     {
         private readonly List<ProductSaleDto> productSalesList = new List<ProductSaleDto>();
         decimal amountToPay = decimal.Zero;
-        private readonly IRequestHandler _requestHandler;
-        private readonly HttpClient _httpClient;
+        private readonly IOrderService _orderService;
+        private readonly IMenuService _menuService;
         private IEnumerable<ProductDto> _products = new List<ProductDto>();
         private IEnumerable<AdditionDto> _additions = new List<AdditionDto>();
         private ProductDto currentProduct;
@@ -27,10 +21,10 @@ namespace Restaurant.UI
         private string email;
         private string notes;
 
-        public Menu(IRequestHandler requestHandler, HttpClient httpClient)
+        public Menu(IOrderService orderService, IMenuService menuService)
         {
-            _requestHandler = requestHandler;
-            _httpClient = httpClient;
+            _orderService = orderService;
+            _menuService = menuService;
             InitializeComponent();
         }
 
@@ -230,7 +224,7 @@ namespace Restaurant.UI
             form.Close();
         }
 
-        private void OrderRealization(object sender, EventArgs e)  // funkcja realizująca zamówienie, która przesyła zawartość zamówienia na adres email i wstawia wartości do tabeli SQL
+        private async void OrderRealization(object sender, EventArgs e)
         {
             if (!productSalesList.Any())
             {
@@ -255,36 +249,37 @@ namespace Restaurant.UI
                 order.Products.Add(product);
             }
 
-            var id = _requestHandler.Send<IOrderService, Guid>(o => o.Add(order));
-            var orderFromDb = _requestHandler.Send<IOrderService, OrderDetailsDto>(o => o.Get(id));
-            var subject = $"Zamówienie nr {orderFromDb.OrderNumber}";
-            var content = orderFromDb.ContentEmail();
+            try
+            {
+                var result = await _orderService.AddOrderAsync(order);
+                if (!result.IsSuccess)
+                {
+                    MessageBox.Show(result.Error.Message, result.Error.Context, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
 
-            Task.Run(() => _requestHandler.Send<IMailSender, Task>((s) =>
-                    s.SendAsync(Email.Of(email),
-                        new EmailMessage(subject, content))));
-                
-            MessageBox.Show("Zamówienie wysłano na maila", "Email",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                MessageBox.Show("Utworzono zamówienie", "Zamówienie",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                ex.MapToMessageBox();
+                return;
+            }
         }
 
         private async void OnLoad(object sender, EventArgs e)
         {
             labelCostOfOrder.Text = amountToPay > 0 ? "Koszt: " + amountToPay + "zł" : "";
-            try
+            var response = await _menuService.GetMenuAsync();
+            if (!response.IsSuccess)
             {
-                var response = await _httpClient.GetAsync("/api/menu");
-                var result = await response.Content.ReadAsStringAsync();
-                var menu = JsonConvert.DeserializeObject<MenuDto>(result);
-                _products = menu?.Products ?? new List<ProductDto>();
-                _additions = menu?.Additions ?? new List<AdditionDto>();
-                comboBoxMainDishes1.Items.AddRange(_products.Select(p => p.ProductName).ToArray());
+                MessageBox.Show(response.Error.Message, response.Error.Context, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Błąd pobierania menu: {ex.Message}", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+
+            _products = response.Data?.Products ?? new List<ProductDto>();
+            _additions = response.Data?.Additions ?? new List<AdditionDto>();
+            comboBoxMainDishes1.Items.AddRange(_products.Select(p => p.ProductName).ToArray());
         }
 
         private void ChangedAddition(object sender, EventArgs e)
@@ -298,12 +293,5 @@ namespace Restaurant.UI
 
             currentAddition = _additions.Where(a => a.AdditionName == currentAdditionName).SingleOrDefault();
         }
-
-        private class MenuDto
-        {
-            public IEnumerable<ProductDto> Products { get; set; }
-            public IEnumerable<AdditionDto> Additions { get; set; }
-        }
     }
-
 }

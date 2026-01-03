@@ -1,6 +1,6 @@
-﻿namespace Restaurant.ApplicationLogic.Interfaces
+namespace Restaurant.ApplicationLogic.Interfaces
 {
-    public interface IOptions
+    public interface IEmailOptions
     {
         string Login { get; set; }
         string Password { get; set; }

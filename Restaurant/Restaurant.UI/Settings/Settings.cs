@@ -1,4 +1,5 @@
-﻿using Restaurant.ApplicationLogic.Interfaces;
+using Restaurant.UI.DTO;
+using Restaurant.UI.Services;
 using System;
 using System.Windows.Forms;
 
@@ -6,32 +7,30 @@ namespace Restaurant.UI
 {
     public partial class Settings : UserControl
     {
-        private readonly IOptions _options;
+        private readonly ISettingsService _settingsService;
         private string field;
-        public delegate void OptionsSaved(IOptions options);
 
-        public static event OptionsSaved SaveSettings;
-
-        public Settings(IOptions options)
+        public Settings(ISettingsService settingsService)
         {
+            _settingsService = settingsService;
             InitializeComponent();
-            _options = options;
         }
 
         private void SetValues(object sender, EventArgs e)
         {
+            var dto = new SettingsDto();
             try
             {
                 field = "Email";
-                _options.Email = textBoxEmail.Text;
+                dto.Email = textBoxEmail.Text;
                 field = "SmtpClient";
-                _options.SmtpClient = textBoxSMTPClient.Text;
+                dto.SmtpClient = textBoxSMTPClient.Text;
                 field = "SmtpPort";
-                _options.SmtpPort = Convert.ToInt32(textBoxSTMPPort.Text);
+                dto.SmtpPort = Convert.ToInt32(textBoxSTMPPort.Text);
                 field = "Login";
-                _options.Login = textBoxLogin.Text;
+                dto.Login = textBoxLogin.Text;
                 field = "Password";
-                _options.Password = textBoxPass.Text;
+                dto.Password = textBoxPass.Text;
             }
             catch (Exception ex)
             {
@@ -41,23 +40,45 @@ namespace Restaurant.UI
                 return;
             }
 
-            try
-            {
-                _options.SaveOptions();
-            }
-            catch
+            SaveSettings(dto);
+        }
+
+        private async void SaveSettings(SettingsDto dto)
+        {
+            var result = await _settingsService.SaveSettings(dto);
+            if (!result.IsSuccess)
             {
                 MessageBox.Show("Wystąpił błąd podczas zapisu", "Save",
                                MessageBoxButtons.OK,
                               MessageBoxIcon.Error);
-                return;
             }
 
             MessageBox.Show("Pomyślnie ustawiono dane", "Ustawienia",
                                MessageBoxButtons.OK,
                               MessageBoxIcon.Information);
-            
-            SaveSettings(_options);
+        }
+
+        private async void LoadSettings(object sender, EventArgs e)
+        {
+            if (!Visible)
+            {
+                return;
+            }
+
+            var result = await _settingsService.GetSettings();
+            if (!result.IsSuccess)
+            {
+                MessageBox.Show("Wystąpił błąd podczas wczytywania", "Load",
+                               MessageBoxButtons.OK,
+                              MessageBoxIcon.Error);
+                return;
+            }
+
+            textBoxEmail.Text = result.Data?.Email;
+            textBoxSMTPClient.Text = result.Data?.SmtpClient;
+            textBoxSTMPPort.Text = (result.Data?.SmtpPort ?? 0).ToString();
+            textBoxLogin.Text = result.Data?.Login;
+            textBoxPass.Text = result.Data?.Password;
         }
     }
 }

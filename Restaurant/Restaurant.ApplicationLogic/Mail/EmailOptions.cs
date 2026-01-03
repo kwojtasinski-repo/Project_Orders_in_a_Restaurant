@@ -1,10 +1,10 @@
-﻿using Restaurant.Domain.Exceptions;
+using Restaurant.Domain.Exceptions;
 using Restaurant.ApplicationLogic.Interfaces;
 using System.Text.RegularExpressions;
 
 namespace Restaurant.ApplicationLogic.Mail
 {
-    internal sealed class Options : IOptions
+    internal sealed class EmailOptions : IEmailOptions
     {
         private const string EMAIL_PATTERN = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
         private string _email;
@@ -22,12 +22,12 @@ namespace Restaurant.ApplicationLogic.Mail
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new RestaurantServerException("Email cannot be empty", typeof(Options).FullName, "OptionsEmail");
+                    throw new RestaurantServerException("Email cannot be empty", typeof(EmailOptions).FullName, "OptionsEmail");
                 }
 
                 if (!Regex.Match(value, EMAIL_PATTERN).Success)
                 {
-                    throw new RestaurantServerException("Invalid Email", typeof(Options).FullName, "OptionsEmail");
+                    throw new RestaurantServerException("Invalid Email", typeof(EmailOptions).FullName, "OptionsEmail");
                 }
 
                 _email = value;

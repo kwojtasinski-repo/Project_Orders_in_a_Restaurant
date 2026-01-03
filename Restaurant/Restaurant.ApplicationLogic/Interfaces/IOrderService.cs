@@ -13,7 +13,7 @@ namespace Restaurant.ApplicationLogic.Interfaces
         Task<IEnumerable<OrderDto>> GetAllAsync();
         Guid Add(OrderDto order);
         Guid Add(OrderDetailsDto orderDetailsDto);
-        Task<Guid> AddAsync(OrderDetailsDto orderDetailsDto);
+        Task<OrderDetailsDto> AddAsync(OrderDetailsDto orderDetailsDto);
         void Update(OrderDto order);
         void Delete(Guid id);
         Task DeleteAsync(Guid id);

@@ -1,3 +1,4 @@
+using Restaurant.UI.Services;
 using Serilog;
 using System;
 using System.Net.Http;
@@ -18,6 +19,9 @@ namespace Restaurant.UI
             container.Register(Castle.MicroKernel.Registration.Component.For<HttpClient>()
                     .UsingFactoryMethod((_) => new HttpClient() { BaseAddress = new Uri("https://localhost:7040") })
                     .LifestyleSingleton());
+            container.Register(Castle.MicroKernel.Registration.Component.For<IMenuService, MenuService>().LifestyleSingleton());
+            container.Register(Castle.MicroKernel.Registration.Component.For<IOrderService, OrderService>().LifestyleSingleton());
+            container.Register(Castle.MicroKernel.Registration.Component.For<ISettingsService, SettingsService>().LifestyleSingleton());
             container.Register(Castle.MicroKernel.Registration.Component.For<MainPanel>().LifestyleSingleton());
             container.Register(Castle.MicroKernel.Registration.Component.For<Menu>().LifestyleSingleton());
             container.Register(Castle.MicroKernel.Registration.Component.For<Settings>().LifestyleSingleton());

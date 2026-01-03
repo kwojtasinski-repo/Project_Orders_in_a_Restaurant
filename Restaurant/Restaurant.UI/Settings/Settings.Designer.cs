@@ -1,4 +1,4 @@
-﻿namespace Restaurant.UI
+namespace Restaurant.UI
 {
     partial class Settings
     {
@@ -156,7 +156,7 @@
             this.Size = new System.Drawing.Size(642, 385);
             this.ResumeLayout(false);
             this.PerformLayout();
-
+            this.VisibleChanged += new System.EventHandler(this.LoadSettings);
         }
 
         #endregion

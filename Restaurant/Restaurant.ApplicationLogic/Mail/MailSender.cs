@@ -1,4 +1,4 @@
-﻿using Restaurant.Domain.Exceptions;
+using Restaurant.Domain.Exceptions;
 using Restaurant.ApplicationLogic.Interfaces;
 using System;
 using System.Net;
@@ -10,9 +10,9 @@ namespace Restaurant.ApplicationLogic.Mail
 {
     internal sealed class MailSender : IMailSender
     {
-        private readonly IOptions _options;
+        private readonly IEmailOptions _options;
 
-        public MailSender(IOptions options)
+        public MailSender(IEmailOptions options)
         {
             _options = options;
         }

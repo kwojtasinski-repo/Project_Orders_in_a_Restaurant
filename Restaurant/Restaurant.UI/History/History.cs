@@ -1,24 +1,23 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Restaurant.ApplicationLogic.DTO;
-using Restaurant.ApplicationLogic.Interfaces;
-using Restaurant.Infrastructure.Requests;
+using Restaurant.UI.Services;
 
 namespace Restaurant.UI
 {
     public partial class History : UserControl
     {
-        private readonly IRequestHandler _requestHandler;
+        private readonly IOrderService _orderService;
 
-        public History(IRequestHandler requestHandler)
+        public History(IOrderService orderService)
         {
-            _requestHandler = requestHandler;
+            _orderService = orderService;
             InitializeComponent();
         }
 
-        private void Details(object sender, EventArgs e)
+        private async void Details(object sender, EventArgs e)
         {
             Int32 selectedCellCount = showOrders.GetCellCount(DataGridViewElementStates.Selected);
             if (selectedCellCount == 1)
@@ -27,8 +26,13 @@ namespace Restaurant.UI
                 int selectedIndex = showOrders.SelectedCells[0].RowIndex;
                 DataGridViewRow selectedRow = showOrders.Rows[selectedIndex];
                 var orderId = (Guid)selectedRow.Cells["Id"].Value;
-                var products = _requestHandler.Send<IProductSaleService, IEnumerable<ProductSaleDto>>(p => p.GetAllByOrderId(orderId));
-                showDetailsofOrder.DataSource = products.ToList();
+                var result = await _orderService.GetOrderAsync(orderId);
+                if (!result.IsSuccess)
+                {
+                    MessageBox.Show(result.Error.Message, result.Error.Context, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+                showDetailsofOrder.DataSource = result.Data.Products;
                 showDetailsofOrder.Columns["Id"].DisplayIndex = 0;
                 showDetailsofOrder.Columns["EndPrice"].HeaderText = "Cena końcowa [zł]";
                 showDetailsofOrder.Columns["EndPrice"].DisplayIndex = 1;
@@ -49,7 +53,7 @@ namespace Restaurant.UI
             }
         }
 
-        private void DeleteOrderFromDB(object sender, EventArgs e)
+        private async void DeleteOrderFromDB(object sender, EventArgs e)
         {
             Int32 selectedCellCount = showOrders.GetCellCount(DataGridViewElementStates.Selected);
             if (selectedCellCount > 0)
@@ -71,21 +75,41 @@ namespace Restaurant.UI
                     orderIds.Add((Guid)selectedRow.Cells["Id"].Value);
                 }
 
-                _requestHandler.Send<IOrderService>(o => o.DeleteOrders(orderIds));
+                var result = await _orderService.DeleteOrders(orderIds);
+                if (result.IsSuccess == false)
+                {
+                    MessageBox.Show(result.Error.Message, result.Error.Context, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
-                var results = _requestHandler.Send<IOrderService, IEnumerable<OrderDto>>(o => o.GetAll());
-                LoadOrdersToDataGrid(results.ToList());
+                var results = await _orderService.GetAllOrdersAsync();
+                if (results.IsSuccess == false)
+                {
+                    MessageBox.Show(result.Error.Message, result.Error.Context, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                LoadOrdersToDataGrid(results.Data);
                 showDetailsofOrder.Visible = false;
             }
         }
 
-        private void LoadLeftHistory(object sender, EventArgs e)
+        private async void LoadLeftHistory(object sender, EventArgs e)
         {
-            if (this.Visible == true)
+            if (!Visible)
             {
-                var results = _requestHandler.Send<IOrderService, IEnumerable<OrderDto>>(o => o.GetAll());
-                LoadOrdersToDataGrid(results.ToList());
+                return;
             }
+
+            var result = await _orderService.GetAllOrdersAsync();
+            if (result.IsSuccess == false)
+            {
+                MessageBox.Show(result.Error.Message, result.Error.Context, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LoadOrdersToDataGrid(new List<OrderDto>());
+                return;
+            }
+
+            LoadOrdersToDataGrid(result.Data);
         }
 
         private void LoadOrdersToDataGrid(IList<OrderDto> orders)

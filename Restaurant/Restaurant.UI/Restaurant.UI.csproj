@@ -246,6 +246,11 @@
     <Compile Include="Dialog\DialogWindow.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="DTO\ApiError.cs" />
+    <Compile Include="DTO\ApiErrorResponse.cs" />
+    <Compile Include="DTO\ApiResult.cs" />
+    <Compile Include="DTO\MenuDto.cs" />
+    <Compile Include="DTO\SettingsDto.cs" />
     <Compile Include="Exceptions\RestaurantClientException.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="MainPanel\MainPanel.cs">
@@ -274,6 +279,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Services\IMenuService.cs" />
+    <Compile Include="Services\IOrderService.cs" />
+    <Compile Include="Services\ISettingsService.cs" />
+    <Compile Include="Services\MenuService.cs" />
+    <Compile Include="Services\OrderService.cs" />
+    <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Settings\Settings.cs">
       <SubType>UserControl</SubType>
     </Compile>

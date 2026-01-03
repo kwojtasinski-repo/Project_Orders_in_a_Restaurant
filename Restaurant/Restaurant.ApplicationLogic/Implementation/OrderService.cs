@@ -1,5 +1,7 @@
+using Microsoft.Extensions.Logging;
 using Restaurant.ApplicationLogic.DTO;
 using Restaurant.ApplicationLogic.Interfaces;
+using Restaurant.ApplicationLogic.Mail;
 using Restaurant.ApplicationLogic.Mappings;
 using Restaurant.Domain.Repositories;
 using System;
@@ -15,12 +17,16 @@ namespace Restaurant.ApplicationLogic.Implementation
         private readonly IOrderRepository _orderRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IProductSaleRepository _productSaleRepository;
+        private readonly IMailSender _mailSender;
+        private readonly ILogger<OrderService> _logger;
 
-        public OrderService(IOrderRepository orderRepository, IUnitOfWork unitOfWork, IProductSaleRepository productSaleRepository)
+        public OrderService(IOrderRepository orderRepository, IUnitOfWork unitOfWork, IProductSaleRepository productSaleRepository, IMailSender mailSender, ILogger<OrderService> logger)
         {
             _orderRepository = orderRepository;
             _unitOfWork = unitOfWork;
             _productSaleRepository = productSaleRepository;
+            _mailSender = mailSender;
+            _logger = logger;
         }
 
         public Guid Add(OrderDto order)
@@ -69,7 +75,7 @@ namespace Restaurant.ApplicationLogic.Implementation
             }
         }
 
-        public async Task<Guid> AddAsync(OrderDetailsDto orderDetailsDto)
+        public async Task<OrderDetailsDto> AddAsync(OrderDetailsDto orderDetailsDto)
         {
             orderDetailsDto.Id = Guid.NewGuid();
             var currentDate = DateTime.UtcNow;
@@ -79,27 +85,45 @@ namespace Restaurant.ApplicationLogic.Implementation
             orderDetailsDto.Created = currentDate;
 
             _unitOfWork.Begin();
+            var result = default(OrderDetailsDto);
 
             try
             {
-                var id = await _orderRepository.AddAsync(orderDetailsDto.AsEntity());
+                var entity = await _orderRepository.AddAsync(orderDetailsDto.AsEntity());
+                var productSales = new List<Domain.Entities.ProductSale>();
 
                 foreach (var productSale in orderDetailsDto.Products)
                 {
-                    productSale.OrderId = id;
+                    productSale.OrderId = entity.Id;
                     productSale.Id = Guid.NewGuid();
                     productSale.ProductSaleState = ProductSaleState.Ordered;
-                    _productSaleRepository.Add(productSale.AsEntity());
+                    var productSaleEntity = productSale.AsEntity();
+                    productSales.Add(productSaleEntity);
+                    var productSaleId = _productSaleRepository.Add(productSaleEntity);
+                    productSale.Id = productSaleId;
                 }
 
                 _unitOfWork.Commit();
-                return id;
+                result = entity.AsDetailsDto();
             }
             catch
             {
                 _unitOfWork.Rollback();
                 throw;
             }
+
+            try
+            {
+                var subject = $"Zamówienie nr {result.OrderNumber}";
+                var content = result.ContentEmail();
+                await _mailSender.SendAsync(Email.Of(orderDetailsDto.Email), new EmailMessage(subject, content));
+            }
+            catch
+            {
+                _logger.LogError($"Unable to send email with confirmation order with number {result.OrderNumber}");
+            }
+
+            return result;
         }
 
         public void Delete(Guid id)

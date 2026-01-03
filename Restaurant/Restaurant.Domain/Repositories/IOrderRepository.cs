@@ -7,7 +7,7 @@ namespace Restaurant.Domain.Repositories
 {
     public interface IOrderRepository : IRepository<Guid, Order>
     {
-        Task<Guid> AddAsync(Order entity);
+        Task<Order> AddAsync(Order entity);
         Order GetLatestOrderOnDate(DateTime currentDate);
         Task<Order> GetLatestOrderOnDateAsync(DateTime currentDate);
         Task DeleteAsync(Guid id);

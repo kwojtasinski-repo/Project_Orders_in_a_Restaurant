@@ -27,11 +27,11 @@ namespace Restaurant.Infrastructure.Repositories
             return entity.Id;
         }
 
-        public async Task<Guid> AddAsync(Order entity)
+        public async Task<Order> AddAsync(Order entity)
         {
             var sql = "INSERT INTO orders (Id, OrderNumber, Created, Price, Email, Note) VALUES (@Id, @OrderNumber, @Created, @Price, @Email, @Note)";
             await _dbConnection.ExecuteAsync(sql, entity);
-            return entity.Id;
+            return entity;
         }
 
         public void Delete(Guid id)

@@ -1,4 +1,4 @@
-﻿using Restaurant.Infrastructure.Requests;
+using Restaurant.Infrastructure.Requests;
 
 namespace Restaurant.UI
 {
@@ -184,7 +184,6 @@ namespace Restaurant.UI
             this.Name = "MainPanel";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Aplikacja";
-            this.Load += new System.EventHandler(this.OnLoad);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
