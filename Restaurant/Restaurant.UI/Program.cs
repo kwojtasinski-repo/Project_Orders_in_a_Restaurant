@@ -1,39 +1,27 @@
+using Microsoft.Extensions.Configuration;
 using Castle.Windsor;
-using Restaurant.UI.Services;
+using Restaurant.UI.ErrorHandling;
 using Serilog;
-using System;
-using System.Net.Http;
-using System.Threading;
-using System.Windows.Forms;
 
 namespace Restaurant.UI
 {
     static class Program
     {
+        public static IConfiguration Configuration { get; private set; } = null!;
+
         /// <summary>
         /// Główny punkt wejścia dla aplikacji.
         /// </summary>
         [STAThread]
         static void Main()
         {
+            Configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
             var container = new WindsorContainer();
-            container.Register(Castle.MicroKernel.Registration.Component.For<HttpClient>()
-                    .UsingFactoryMethod((_) => new HttpClient() { BaseAddress = new Uri("https://localhost:7040") })
-                    .LifestyleSingleton());
-            container.Register(Castle.MicroKernel.Registration.Component.For<IMenuService, MenuService>().LifestyleSingleton());
-            container.Register(Castle.MicroKernel.Registration.Component.For<IOrderService, OrderService>().LifestyleSingleton());
-            container.Register(Castle.MicroKernel.Registration.Component.For<ISettingsService, SettingsService>().LifestyleSingleton());
-            container.Register(Castle.MicroKernel.Registration.Component.For<MainPanel>().LifestyleSingleton());
-            container.Register(Castle.MicroKernel.Registration.Component.For<Menu>().LifestyleSingleton());
-            container.Register(Castle.MicroKernel.Registration.Component.For<Settings>().LifestyleSingleton());
-            container.Register(Castle.MicroKernel.Registration.Component.For<History>().LifestyleSingleton());
-            container.Register(Castle.MicroKernel.Registration.Component.For<ILogger>().
-                    UsingFactoryMethod(kernel => 
-                    {
-                        return new LoggerConfiguration()
-                          .ReadFrom.AppSettings()
-                          .CreateLogger();
-                    }).LifestyleSingleton());
+            container.RegisterServices(Configuration);
             var logger = container.Resolve<ILogger>();
             Application.EnableVisualStyles();
             // Add handler to handle the exception raised by main threads

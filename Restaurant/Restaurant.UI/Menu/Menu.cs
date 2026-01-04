@@ -1,10 +1,7 @@
 using Restaurant.Shared.DTO;
 using Restaurant.UI.Dialog;
+using Restaurant.UI.ErrorHandling;
 using Restaurant.UI.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 
 namespace Restaurant.UI
 {
@@ -17,7 +14,7 @@ namespace Restaurant.UI
         private IEnumerable<ProductDto> _products = new List<ProductDto>();
         private IEnumerable<AdditionDto> _additions = new List<AdditionDto>();
         private ProductDto currentProduct;
-        private AdditionDto currentAddition;
+        private AdditionDto? currentAddition;
         private string email;
         private string notes;
 
@@ -171,7 +168,7 @@ namespace Restaurant.UI
         {
             if (this.Visible == true)
             {
-                Extensions.ShowDialog("Wprowadź email", "Email", ValidEmail);
+                DialogExtension.ShowDialog("Wprowadź email", "Email", ValidEmail!);
                 timer1.Enabled = true;
             }
             else
@@ -234,7 +231,7 @@ namespace Restaurant.UI
                   return;
             }
 
-            Extensions.ShowDialog("Wprowadź uwagi do zamówienia", "Uwagi", AddNotes);
+            DialogExtension.ShowDialog("Wprowadź uwagi do zamówienia", "Uwagi", AddNotes!);
 
             var order = new OrderDetailsDto()
             {
@@ -284,14 +281,14 @@ namespace Restaurant.UI
 
         private void ChangedAddition(object sender, EventArgs e)
         {
-            var currentAdditionName = (string) comboBoxAdditions.SelectedItem;
+            string? currentAdditionName = comboBoxAdditions.SelectedItem as string;
 
             if (currentAdditionName is null)
             {
                 return;
             }
 
-            currentAddition = _additions.Where(a => a.AdditionName == currentAdditionName).SingleOrDefault();
+            currentAddition = _additions.Where(a => string.Equals(a.AdditionName, currentAdditionName)).SingleOrDefault();
         }
     }
 }
