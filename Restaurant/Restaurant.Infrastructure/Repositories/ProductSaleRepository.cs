@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Restaurant.ApplicationLogic.Interfaces;
 using Restaurant.Domain.Entities;
 using Restaurant.Domain.Repositories;

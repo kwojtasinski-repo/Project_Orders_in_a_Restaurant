@@ -71,7 +71,7 @@ namespace Restaurant.UI
                 return false;
             }
 
-            if (!Regex.Match(email, Extensions.EMAIL_PATTERN).Success)
+            if (!Regex.Match(email, EMAIL_PATTERN).Success)
             {
                 return false;
             }

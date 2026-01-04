@@ -1,3 +1,4 @@
+using Castle.Windsor;
 using Restaurant.UI.Services;
 using Serilog;
 using System;
@@ -15,7 +16,7 @@ namespace Restaurant.UI
         [STAThread]
         static void Main()
         {
-            var container = SetupApplication.Create();
+            var container = new WindsorContainer();
             container.Register(Castle.MicroKernel.Registration.Component.For<HttpClient>()
                     .UsingFactoryMethod((_) => new HttpClient() { BaseAddress = new Uri("https://localhost:7040") })
                     .LifestyleSingleton());

@@ -12,6 +12,8 @@ namespace Restaurant.Infrastructure.Mappings
             SqlMapper.AddTypeHandler(new EmailHandler());
             SqlMapper.RemoveTypeMap(typeof(Guid));
             SqlMapper.RemoveTypeMap(typeof(Guid?));
+            SqlMapper.AddTypeHandler(typeof(decimal), new DecimalHandler());
+            SqlMapper.AddTypeHandler(typeof(decimal?), new DecimalHandler());
             return services;
         }
     }

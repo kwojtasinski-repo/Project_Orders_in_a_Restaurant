@@ -1,4 +1,5 @@
 using FluentMigrator.Runner;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Restaurant.ApplicationLogic.Interfaces;
@@ -9,7 +10,6 @@ using Restaurant.Infrastructure.Repositories;
 using Restaurant.Migrations.Orders;
 using System;
 using System.Data;
-using System.Data.SQLite;
 
 namespace Restaurant.Infrastructure
 {
@@ -36,7 +36,7 @@ namespace Restaurant.Infrastructure
         {
             var connectionString = configuration.GetConnectionString("RestaurantDb");
             services.AddScoped<IDbConnection>((_) => {
-                var connection = new SQLiteConnection(connectionString);
+                var connection = new SqliteConnection(connectionString);
                 connection.Open();
                 return connection;
             });

@@ -16,7 +16,7 @@ namespace Restaurant.IntegrationTests.Common
             var services = new ServiceCollection();
             var inMemorySettings = new Dictionary<string, string>
             {
-                ["ConnectionStrings:RestaurantDb"] = $"Data Source={DB_FILE_NAME};New=True;BinaryGuid=False",
+                ["ConnectionStrings:RestaurantDb"] = $"Data Source={DB_FILE_NAME}",
                 ["EmailOptions:Login"] = "login",
                 ["EmailOptions:Password"] = "",
                 ["EmailOptions:SmtpClient"] = "",

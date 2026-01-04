@@ -22,7 +22,7 @@ namespace Restaurant.IntegrationTests
         [OneTimeTearDown]
         public void OneTimeTeardown()
         {
-            System.Data.SQLite.SQLiteConnection.ClearAllPools();
+            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
             serviceScope?.Dispose();
             if (Container is IDisposable disposable)
             {
