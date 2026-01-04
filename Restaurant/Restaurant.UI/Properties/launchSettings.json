@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Restaurant.WinForms": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
