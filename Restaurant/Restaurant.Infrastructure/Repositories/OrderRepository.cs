@@ -52,18 +52,20 @@ namespace Restaurant.Infrastructure.Repositories
 
         public void DeleteOrders(IEnumerable<Guid> ids)
         {
-            var sqlProductSales = "DELETE FROM product_sales WHERE OrderId IN @Ids";
-            _dbConnection.Execute(sqlProductSales, new { Ids = ids });
-            var sqlOrders = "DELETE FROM orders WHERE Id IN @Ids";
-            _dbConnection.Execute(sqlOrders, new { Ids = ids });
+            var (inClause, parameters) = SetSqlParametersInClause("id", ids);
+            var sqlProductSales = $"DELETE FROM product_sales WHERE OrderId IN ({inClause})";
+            _dbConnection.Execute(sqlProductSales, parameters);
+            var sqlOrders = $"DELETE FROM product_sales WHERE OrderId IN ({inClause})";
+            _dbConnection.Execute(sqlOrders, parameters);
         }
 
         public async Task DeleteOrdersAsync(IEnumerable<Guid> ids)
         {
-            var sqlProductSales = "DELETE FROM product_sales WHERE OrderId IN @Ids";
-            await _dbConnection.ExecuteAsync(sqlProductSales, new { Ids = ids });
-            var sqlOrders = "DELETE FROM orders WHERE Id IN @Ids";
-            await _dbConnection.ExecuteAsync(sqlOrders, new { Ids = ids });
+            var (inClause, parameters) = SetSqlParametersInClause("id", ids);
+            var sqlProductSales = $"DELETE FROM product_sales WHERE OrderId IN ({inClause})";
+            await _dbConnection.ExecuteAsync(sqlProductSales, parameters);
+            var sqlOrders = $"DELETE FROM orders WHERE Id IN ({inClause})";
+            await _dbConnection.ExecuteAsync(sqlOrders, parameters);
         }
 
         public Order Get(Guid id)
@@ -212,6 +214,25 @@ namespace Restaurant.Infrastructure.Repositories
         {
             var sql = "UPDATE orders SET OrderNumber = @OrderNumber, Created = @Created, Price = @Price, Email = @Email WHERE Id = @Id";
             _dbConnection.Execute(sql, entity);
+        }
+
+        private (string InClause, DynamicParameters Parameters) SetSqlParametersInClause<T>(string parameterPrefix, IEnumerable<T> values)
+        {
+            var list = values?.ToList() ?? throw new ArgumentNullException(nameof(values));
+            if (!list.Any())
+                throw new ArgumentException("Values collection cannot be empty", nameof(values));
+
+            var parameters = new DynamicParameters();
+            var names = new List<string>();
+
+            for (var i = 0; i < list.Count; i++)
+            {
+                var name = $"{parameterPrefix}{i}";
+                names.Add($"@{name}");
+                parameters.Add(name, list[i]);
+            }
+
+            return (string.Join(", ", names), parameters);
         }
     }
 }

@@ -4,7 +4,7 @@ namespace Restaurant.Shared.DTO
 {
     public class MenuDto
     {
-        public IEnumerable<ProductDto> Products { get; set; }
-        public IEnumerable<AdditionDto> Additions { get; set; }
+        public IEnumerable<ProductDto> Products { get; set; } = [];
+        public IEnumerable<AdditionDto> Additions { get; set; } = [];
     }
 }

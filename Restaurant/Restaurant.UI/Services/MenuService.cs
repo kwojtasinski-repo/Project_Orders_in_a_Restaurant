@@ -1,8 +1,5 @@
-using System;
 using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Restaurant.Shared.DTO;
 
 namespace Restaurant.UI.Services
@@ -25,12 +22,12 @@ namespace Restaurant.UI.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var menu = JsonConvert.DeserializeObject<MenuDto>(content);
-                    return new ApiResult<MenuDto> { Data = menu };
+                    var menu = JsonSerializer.Deserialize<MenuDto>(content, Extensions.JsonSerializerOptions);
+                    return new ApiResult<MenuDto> { Data = menu ?? new MenuDto() };
                 }
                 else if (response.StatusCode == HttpStatusCode.BadRequest)
                 {
-                    var error = JsonConvert.DeserializeObject<ApiErrorResponse>(content)?.Error;
+                    var error = JsonSerializer.Deserialize<ApiErrorResponse>(content, Extensions.JsonSerializerOptions)?.Error;
                     return new ApiResult<MenuDto> { Error = error };
                 }
                 else
@@ -40,7 +37,6 @@ namespace Restaurant.UI.Services
                         Error = new ApiError
                         {
                             Message = $"Unexpected error: {response.StatusCode}",
-                            ClassObjectThrown = nameof(MenuService),
                             Context = nameof(GetMenuAsync)
                         }
                     };
@@ -53,7 +49,6 @@ namespace Restaurant.UI.Services
                     Error = new ApiError
                     {
                         Message = ex.Message,
-                        ClassObjectThrown = nameof(MenuService),
                         Context = nameof(GetMenuAsync)
                     }
                 };

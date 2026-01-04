@@ -1,10 +1,7 @@
-using Newtonsoft.Json;
 using Restaurant.Shared.DTO;
-using System;
 using System.Net;
-using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace Restaurant.UI.Services
 {
@@ -27,12 +24,12 @@ namespace Restaurant.UI.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var settings = JsonConvert.DeserializeObject<SettingsDto>(responseContent);
-                    return new ApiResult<SettingsDto> { Data = settings };
+                    var settings = JsonSerializer.Deserialize<SettingsDto>(responseContent, Extensions.JsonSerializerOptions);
+                    return new ApiResult<SettingsDto> { Data = settings! };
                 }
                 else if (response.StatusCode == HttpStatusCode.BadRequest)
                 {
-                    var error = JsonConvert.DeserializeObject<ApiErrorResponse>(responseContent)?.Error;
+                    var error = JsonSerializer.Deserialize<ApiErrorResponse>(responseContent, Extensions.JsonSerializerOptions)?.Error;
                     return new ApiResult<SettingsDto> { Error = error };
                 }
                 else
@@ -42,7 +39,6 @@ namespace Restaurant.UI.Services
                         Error = new ApiError
                         {
                             Message = $"Unexpected error: {response.StatusCode}",
-                            ClassObjectThrown = nameof(SettingsService),
                             Context = nameof(GetSettings)
                         }
                     };
@@ -55,7 +51,6 @@ namespace Restaurant.UI.Services
                     Error = new ApiError
                     {
                         Message = ex.Message,
-                        ClassObjectThrown = nameof(SettingsService),
                         Context = nameof(GetSettings)
                     }
                 };
@@ -66,7 +61,7 @@ namespace Restaurant.UI.Services
         {
             try
             {
-                var json = JsonConvert.SerializeObject(dto);
+                var json = JsonSerializer.Serialize(dto, Extensions.JsonSerializerOptions);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 var response = await _httpClient.PutAsync(ApiBaseUrl, content);
 
@@ -76,7 +71,7 @@ namespace Restaurant.UI.Services
                 }
                 else if (response.StatusCode == HttpStatusCode.BadRequest)
                 {
-                    var error = JsonConvert.DeserializeObject<ApiErrorResponse>(await response.Content.ReadAsStringAsync())?.Error;
+                    var error = JsonSerializer.Deserialize<ApiErrorResponse>(await response.Content.ReadAsStringAsync(), Extensions.JsonSerializerOptions)?.Error;
                     return new ApiResult { Error = error };
                 }
                 else
@@ -86,7 +81,6 @@ namespace Restaurant.UI.Services
                         Error = new ApiError
                         {
                             Message = $"Unexpected error: {response.StatusCode}",
-                            ClassObjectThrown = nameof(SettingsService),
                             Context = nameof(SaveSettings)
                         }
                     };
@@ -99,7 +93,6 @@ namespace Restaurant.UI.Services
                     Error = new ApiError
                     {
                         Message = ex.Message,
-                        ClassObjectThrown = nameof(SettingsService),
                         Context = nameof(SaveSettings)
                     }
                 };

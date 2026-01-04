@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Restaurant.Domain.Exceptions;
+using Restaurant.Shared.DTO;
 using System.Net;
 using System.Text.Json;
 
@@ -36,26 +37,24 @@ namespace Restaurant.API.Middleware
 
         private object CreateErrorResponse(RestaurantException exception)
         {
-            return new
+            return new ApiErrorResponse
             {
-                Error = new
+                Error = new ApiError
                 {
-                    exception.Message,
-                    exception.ClassObjectThrown,
-                    exception.Context
+                    Message = exception.Message,
+                    Context = exception.Context
                 }
             };
         }
 
         private object CreateErrorResponse(RestaurantServerException exception)
         {
-            return new
+            return new ApiErrorResponse
             {
-                Error = new
+                Error = new ApiError
                 {
-                    exception.Message,
-                    exception.ClassObjectThrown,
-                    exception.Context
+                    Message = exception.Message,
+                    Context = exception.Context
                 }
             };
         }

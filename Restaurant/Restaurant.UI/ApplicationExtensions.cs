@@ -11,9 +11,7 @@ namespace Restaurant.UI
         public static IServiceCollection RegisterServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddSingleton((_) => new HttpClient() { BaseAddress = new Uri(configuration.GetSection("BackendUrl")?.Value ?? throw new InvalidOperationException("Put backend url to appsettings.json to root `\"BackendUrl\": \"URL\"`")) });
-            services.AddSingleton<IMenuService, MenuService>();
-            services.AddSingleton<IOrderService, OrderService>();
-            services.AddSingleton<ISettingsService, SettingsService>();
+            services.AddServices();
             services.AddSingleton<MainPanel>();
             services.AddSingleton<Menu>();
             services.AddSingleton<Settings>();
@@ -27,7 +25,6 @@ namespace Restaurant.UI
                         configuration["Logging:File:Path"]!
                     )
                 );
-
             });
             return services;
         }

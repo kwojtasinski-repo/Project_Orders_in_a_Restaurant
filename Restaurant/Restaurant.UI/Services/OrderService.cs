@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Restaurant.Shared.DTO;
+using System.Net;
+using System.Text;
+using System.Text.Json;
 
 namespace Restaurant.UI.Services
 {
@@ -23,19 +19,19 @@ namespace Restaurant.UI.Services
         {
             try
             {
-                var json = JsonConvert.SerializeObject(order);
+                var json = JsonSerializer.Serialize(order, Extensions.JsonSerializerOptions);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 var response = await _httpClient.PostAsync(ApiBaseUrl, content);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var dto = JsonConvert.DeserializeObject<OrderDetailsDto>(responseContent);
-                    return new ApiResult<OrderDetailsDto> { Data = dto };
+                    var dto = JsonSerializer.Deserialize<OrderDetailsDto>(responseContent, Extensions.JsonSerializerOptions);
+                    return new ApiResult<OrderDetailsDto> { Data = dto! };
                 }
                 else if (response.StatusCode == HttpStatusCode.BadRequest)
                 {
-                    var error = JsonConvert.DeserializeObject<ApiErrorResponse>(responseContent)?.Error;
+                    var error = JsonSerializer.Deserialize<ApiErrorResponse>(responseContent, Extensions.JsonSerializerOptions)?.Error;
                     return new ApiResult<OrderDetailsDto> { Error = error };
                 }
                 else
@@ -45,7 +41,6 @@ namespace Restaurant.UI.Services
                         Error = new ApiError
                         {
                             Message = $"Unexpected error: {response.StatusCode}",
-                            ClassObjectThrown = nameof(OrderService),
                             Context = nameof(AddOrderAsync)
                         }
                     };
@@ -58,7 +53,6 @@ namespace Restaurant.UI.Services
                     Error = new ApiError
                     {
                         Message = ex.Message,
-                        ClassObjectThrown = nameof(OrderService),
                         Context = nameof(AddOrderAsync)
                     }
                 };
@@ -74,12 +68,12 @@ namespace Restaurant.UI.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var order = JsonConvert.DeserializeObject<List<OrderDto>>(responseContent);
-                    return new ApiResult<List<OrderDto>> { Data = order };
+                    var order = JsonSerializer.Deserialize<List<OrderDto>>(responseContent, Extensions.JsonSerializerOptions);
+                    return new ApiResult<List<OrderDto>> { Data = order! };
                 }
                 else if (response.StatusCode == HttpStatusCode.BadRequest)
                 {
-                    var error = JsonConvert.DeserializeObject<ApiErrorResponse>(responseContent)?.Error;
+                    var error = JsonSerializer.Deserialize<ApiErrorResponse>(responseContent, Extensions.JsonSerializerOptions)?.Error;
                     return new ApiResult<List<OrderDto>> { Error = error };
                 }
                 else
@@ -89,8 +83,7 @@ namespace Restaurant.UI.Services
                         Error = new ApiError
                         {
                             Message = $"Unexpected error: {response.StatusCode}",
-                            ClassObjectThrown = nameof(OrderService),
-                            Context = nameof(GetOrderAsync)
+                            Context = nameof(GetAllOrdersAsync)
                         }
                     };
                 }
@@ -102,8 +95,7 @@ namespace Restaurant.UI.Services
                     Error = new ApiError
                     {
                         Message = ex.Message,
-                        ClassObjectThrown = nameof(OrderService),
-                        Context = nameof(GetOrderAsync)
+                        Context = nameof(GetAllOrdersAsync)
                     }
                 };
             }
@@ -118,12 +110,12 @@ namespace Restaurant.UI.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var order = JsonConvert.DeserializeObject<OrderDetailsDto>(responseContent);
-                    return new ApiResult<OrderDetailsDto> { Data = order };
+                    var order = JsonSerializer.Deserialize<OrderDetailsDto>(responseContent, Extensions.JsonSerializerOptions);
+                    return new ApiResult<OrderDetailsDto> { Data = order! };
                 }
                 else if (response.StatusCode == HttpStatusCode.BadRequest)
                 {
-                    var error = JsonConvert.DeserializeObject<ApiErrorResponse>(responseContent)?.Error;
+                    var error = JsonSerializer.Deserialize<ApiErrorResponse>(responseContent, Extensions.JsonSerializerOptions)?.Error;
                     return new ApiResult<OrderDetailsDto> { Error = error };
                 }
                 else
@@ -133,7 +125,6 @@ namespace Restaurant.UI.Services
                         Error = new ApiError
                         {
                             Message = $"Unexpected error: {response.StatusCode}",
-                            ClassObjectThrown = nameof(OrderService),
                             Context = nameof(GetOrderAsync)
                         }
                     };
@@ -146,7 +137,6 @@ namespace Restaurant.UI.Services
                     Error = new ApiError
                     {
                         Message = ex.Message,
-                        ClassObjectThrown = nameof(OrderService),
                         Context = nameof(GetOrderAsync)
                     }
                 };
@@ -159,18 +149,17 @@ namespace Restaurant.UI.Services
             {
                 var response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"{ApiBaseUrl}/multi")
                 {
-                    Content = new StringContent(JsonConvert.SerializeObject(orderIds), Encoding.UTF8, "application/json")
+                    Content = new StringContent(JsonSerializer.Serialize(orderIds, Extensions.JsonSerializerOptions), Encoding.UTF8, "application/json")
                 });
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var order = JsonConvert.DeserializeObject<OrderDetailsDto>(responseContent);
                     return new ApiResult();
                 }
                 else if (response.StatusCode == HttpStatusCode.BadRequest)
                 {
-                    var error = JsonConvert.DeserializeObject<ApiErrorResponse>(responseContent)?.Error;
+                    var error = JsonSerializer.Deserialize<ApiErrorResponse>(responseContent, Extensions.JsonSerializerOptions)?.Error;
                     return new ApiResult() { Error = error };
                 }
                 else
@@ -180,8 +169,7 @@ namespace Restaurant.UI.Services
                         Error = new ApiError
                         {
                             Message = $"Unexpected error: {response.StatusCode}",
-                            ClassObjectThrown = nameof(OrderService),
-                            Context = nameof(GetOrderAsync)
+                            Context = nameof(DeleteOrders)
                         }
                     };
                 }
@@ -193,8 +181,7 @@ namespace Restaurant.UI.Services
                     Error = new ApiError
                     {
                         Message = ex.Message,
-                        ClassObjectThrown = nameof(OrderService),
-                        Context = nameof(GetOrderAsync)
+                        Context = nameof(DeleteOrders)
                     }
                 };
             }
