@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using Restaurant.Domain.Entities;
 using Restaurant.Domain.Exceptions;
 using Shouldly;
@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace Restaurant.UnitTests
 {
+    [TestFixture]
     public class ProductTests
     {
         [Test]

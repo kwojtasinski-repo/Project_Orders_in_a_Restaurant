@@ -4,7 +4,9 @@ using Restaurant.ApplicationLogic.Exceptions;
 using Restaurant.ApplicationLogic.Implementation;
 using Restaurant.ApplicationLogic.Interfaces;
 using Restaurant.ApplicationLogic.Mail;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("Restaurant.UnitTests")]
 namespace Restaurant.ApplicationLogic
 {
     public static class Extensions
