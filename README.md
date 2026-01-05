@@ -50,7 +50,7 @@ The solution is organized into clearly defined layers and projects:
 The system is under **incremental modernization**.
 
 Current state:
-- Windows Forms UI (.NET Framework 4.8) acts as a client
+- Windows Forms UI (.NET 10) acts as a client
 - Backend API (.NET 10) is the system boundary
 - Business logic resides in Domain and ApplicationLogic
 - UI has **no direct database access**
@@ -68,20 +68,18 @@ The solution includes a dedicated **Migrations** project based on FluentMigrator
 - Migrations describe the current database schema
 - Each migration has a defined execution order
 - Migrations are executed during backend startup
-- Migration execution is compatible with legacy .NET Framework constraints
 
 ---
 
 ## Technologies
 
-- **.NET Framework 4.8** – WinForms UI (legacy)
+- **.NET 10** – WinForms UI
 - **.NET 10** – Backend API
 - **Windows Forms**
 - **SQLite**
 - **Dapper**
 - **FluentMigrator**
-- **Castle Windsor** – legacy IoC (UI)
-- **Microsoft.Extensions.DependencyInjection** – API
+- **Microsoft.Extensions.DependencyInjection** – API, UI
 - **NUnit** – unit and integration testing
 
 ---
@@ -99,7 +97,7 @@ application.
 
 ## Project Diagram
 
-![Project structure](https://raw.githubusercontent.com/kamasjdev/Project_Orders_in_a_Restaurant/master/projects_app.jpg)
+![Project structure](projects_app.jpg)
 
 ---
 
@@ -109,7 +107,7 @@ The system uses a local SQLite database for order persistence.
 The database schema is created automatically during backend startup
 based on defined migrations.
 
-![Database schema](https://raw.githubusercontent.com/kamasjdev/Project_Orders_in_a_Restaurant/master/schemat_bazy_danych.png)
+![Database schema](schemat_bazy_danych.png)
 
 ---
 
