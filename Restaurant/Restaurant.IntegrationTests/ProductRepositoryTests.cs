@@ -1,21 +1,21 @@
-using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Restaurant.Domain.Entities;
 using Restaurant.Domain.Repositories;
+using Restaurant.IntegrationTests.Common;
 using Shouldly;
 using System;
 
 namespace Restaurant.IntegrationTests
 {
     [TestFixture]
-    public class ProductRepositoryTests
+    public class ProductRepositoryTests : BaseTest
     {
         private IProductRepository repository;
 
         [SetUp]
         public void Setup()
         {
-            repository = Config.Container.GetRequiredService<IProductRepository>();
+            repository = GetService<IProductRepository>();
         }
 
         [Test]

@@ -28,7 +28,6 @@ else
     app.UseExceptionHandler();
 }
 
-app.Services.UseInfrastructure();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
@@ -36,3 +35,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program
+{
+}

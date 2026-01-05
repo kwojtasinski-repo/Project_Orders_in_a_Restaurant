@@ -1,41 +1,56 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Restaurant.ApplicationLogic;
-using Restaurant.Infrastructure;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Restaurant.IntegrationTests.Common
 {
-    internal class TestApplicationFactory
+    internal class TestApplicationFactory : WebApplicationFactory<Program>
     {
-        public static string DB_FILE_NAME => "restaurant-integration-test.db";
+        private readonly string _dbPath = Path.Combine(Path.GetTempPath(), $"restaurant-test-{Guid.NewGuid()}.db");
+        private bool _disposed;
 
-        public IServiceProvider StartApplication()
+        protected override void ConfigureWebHost(
+            IWebHostBuilder builder)
         {
-            var services = new ServiceCollection();
-            var inMemorySettings = new Dictionary<string, string>
+            builder.ConfigureAppConfiguration(config =>
             {
-                ["ConnectionStrings:RestaurantDb"] = $"Data Source={DB_FILE_NAME}",
-                ["EmailOptions:Login"] = "login",
-                ["EmailOptions:Password"] = "",
-                ["EmailOptions:SmtpClient"] = "",
-                ["EmailOptions:SmtpPort"] = "578",
-                ["EmailOptions:Email"] = "email@email.com"
-            };
+                var settings = new Dictionary<string, string>
+                {
+                    ["ConnectionStrings:RestaurantDb"] = $"Data Source={_dbPath}"
+                };
 
+                config.AddInMemoryCollection(settings);
+            });
 
-            var configurationBuilder = new ConfigurationBuilder();
-            configurationBuilder.AddInMemoryCollection(inMemorySettings);
-            var configuration = configurationBuilder.Build();
+            builder.ConfigureServices(services =>
+            {
+                services.AddHostedService<InitializeDb>();
+            });
+        }
 
-            services.AddApplicationLogic(configuration);
-            services.AddInfrastructure(configuration);
+        protected override void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
 
-            var serviceProvider = services.BuildServiceProvider();
-            serviceProvider.UseInfrastructure();
-            DataSeed.AddData(serviceProvider);
-            return serviceProvider;
+            if (disposing)
+            {
+                Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+                if (File.Exists(_dbPath))
+                {
+                    File.Delete(_dbPath);
+                }
+            }
+
+            _disposed = true;
+            base.Dispose(disposing);
         }
     }
 }
