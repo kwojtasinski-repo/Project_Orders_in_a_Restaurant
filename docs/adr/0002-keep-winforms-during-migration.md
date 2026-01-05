@@ -1,7 +1,7 @@
 # ADR 0002: Keep WinForms UI During Modernization
 
 ## Status
-Accepted
+Deprecated
 
 ## Context
 The application UI is currently implemented using Windows Forms (.NET Framework 4.8).
@@ -40,3 +40,7 @@ UI technology replacement is explicitly out of scope for the initial migration.
 ## Notes
 Once the backend architecture is stabilized and API contracts are mature,
 alternative UI technologies (e.g., WPF or MAUI) may be evaluated as separate initiatives.
+
+This ADR has fulfilled its purpose during the modernization phase.
+WinForms remains supported, but UI technology decisions are no longer
+governed by this ADR and require new decisions.
